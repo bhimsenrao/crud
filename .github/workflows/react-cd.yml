@@ -6,7 +6,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'app-crud/**'           # ← Frontend folder
+      - 'app-crud/**'           # Triggers only when app-crud files change
       - '.github/workflows/react-cd.yml'
 
 permissions:
@@ -41,9 +41,11 @@ jobs:
       uses: actions/configure-pages@v5
 
     - name: Upload Pages artifact
-      uses: actions/upload-pages-artifact@v4
+      uses: actions/upload-pages-artifact@v3 # Reverted to a highly stable v3 variant for Pages asset packaging
       with:
-        path: './app-crud/dist'
+        # CRITICAL: Ensure this matches your project's output folder!
+        # Use './app-crud/dist' for Vite, or './app-crud/build' for Create React App
+        path: './app-crud/dist' 
 
   deploy:
     needs: build

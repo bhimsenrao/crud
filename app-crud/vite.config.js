@@ -5,7 +5,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/Crud/',  // Change to your repo name
+  base: '/react-crud/',  // Change to your repo name
   server: {
     proxy: {
       '/api': {
