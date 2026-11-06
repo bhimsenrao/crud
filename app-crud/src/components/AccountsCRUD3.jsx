@@ -21,7 +21,13 @@ function AccountsCRUD3() {
   const accountsPerPage = 5;
 
   // Backend API
-  const API = 'http://localhost:5000/accounts';
+ // const API = 'http://localhost:5000/accounts';
+// Replace this with the actual live URL given to you by your hosting provider (like Render)
+const API = 'https://onrender.com'; 
+
+// Use the live URL for your CRUD requests
+//axios.get(`${API_URL}/accounts`)
+//  .then(res => setAccounts(res.data));
 
 
   // ============================
