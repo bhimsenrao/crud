@@ -1,26 +1,31 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
-const path = require('path'); // 1. Import the built-in path module
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 2. Resolve an absolute path dynamically or read from a hosting platform's environment variable
-const dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'bank.db');
-
-// Setup DB
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Database connection failed:', err.message);
-  else console.log(`Database connected at: ${dbPath}`);
+// 1. Setup In-Memory DB (Lives in container RAM, zero file/permission issues)
+const db = new sqlite3.Database(':memory:', (err) => {
+  if (err) {
+    console.error('In-memory database error:', err.message);
+  } else {
+    console.log('Connected to the in-memory SQLite database.');
+  }
 });
 
-db.run(`CREATE TABLE IF NOT EXISTS accounts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  balance REAL
-)`);
+// 2. Initialize Table & Seed Sample Data sequentially
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    balance REAL
+  )`);
+
+  // Optional: Pre-populate with a sample record so the frontend shows data on boot
+  db.run(`INSERT INTO accounts (name, balance) VALUES (?, ?)`, ['Demo Account', 1000]);
+});
 
 // CREATE
 app.post('/accounts', (req, res) => {
@@ -56,4 +61,6 @@ app.delete('/accounts/:id', (req, res) => {
   });
 });
 
-app.listen(5000, () => console.log('Server running on port 5000'));
+// 3. Use process.env.PORT for cloud container compatibility, fallback to 5000 locally
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

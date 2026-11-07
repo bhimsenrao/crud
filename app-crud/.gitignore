@@ -28,3 +28,7 @@ dist-ssr
 bank.db
 *.db
 *.sqlite3
+server1.js
+server2.js
+server/server2.js
+server/server1.js
